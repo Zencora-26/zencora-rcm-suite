@@ -1667,7 +1667,7 @@
 
             <div class="form-group">
                 <label class="form-label">User ID, Email, or Mobile Number</label>
-                <input type="text" id="login-identifier" class="form-input" required placeholder="Enter username (ceo_zencora)" autofocus autocomplete="off">
+                <input type="text" id="login-identifier" class="form-input" required placeholder="Enter username" autofocus autocomplete="off">
             </div>
 
             <div class="form-group">
@@ -1835,6 +1835,11 @@
                 <div class="nav-item" data-module="documents" onclick="switchNavView('documents')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Document Storage Vaults
+                </div>
+                <div class="nav-item" data-module="contracts" onclick="switchNavView('contracts')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                    Contracts
+                    <span class="badge-pill" id="badge-contracts-count">8</span>
                 </div>
             </div>
         </aside>
@@ -2941,6 +2946,82 @@
                 </div>
             </section>
 
+            <!-- 9B. CONTRACTS & CORPORATE LEGAL TEMPLATES VIEW -->
+            <section id="view-contracts" class="view-section">
+                <div class="page-header">
+                    <div class="page-title-group">
+                        <div style="display:flex; align-items:center; gap:0.65rem;">
+                            <h1>Corporate RCM Contracts & Legal Template Hub</h1>
+                            <span class="status-pill" style="background:rgba(217,119,6,0.14); color:#B45309; border:1px solid rgba(217,119,6,0.3); font-weight:700;">🔒 Executive & Management Access</span>
+                        </div>
+                        <p>Manage standardized corporate RCM agreements (BAA, NDA, MSA/CSA, Freelance, SLA, Credentialing LOA) with dynamic placeholder generation.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-secondary" onclick="filterContractsByCategory('all')">All Templates</button>
+                        <button class="btn-primary" onclick="openNewContractModal()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            + Create Contract Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Metrics & Filter Bar -->
+                <div class="metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.25rem;">
+                    <div class="metric-card" onclick="filterContractsByCategory('all')" style="cursor:pointer;">
+                        <div class="metric-header">
+                            <span class="metric-label">Total Corporate Templates</span>
+                            <div class="metric-icon" style="background:rgba(153,27,27,0.1); color:#991B1B;">📜</div>
+                        </div>
+                        <div class="metric-value" id="contracts-metric-total">8</div>
+                        <div class="metric-trend trend-up">Ready with dynamic placeholders</div>
+                    </div>
+                    <div class="metric-card" onclick="filterContractsByCategory('HIPAA & Compliance')" style="cursor:pointer;">
+                        <div class="metric-header">
+                            <span class="metric-label">HIPAA BAA & Security</span>
+                            <div class="metric-icon" style="background:rgba(16,185,129,0.12); color:#059669;">🛡️</div>
+                        </div>
+                        <div class="metric-value" id="contracts-metric-hipaa">2</div>
+                        <div class="metric-trend trend-up">45 CFR 164 Omnibus Compliant</div>
+                    </div>
+                    <div class="metric-card" onclick="filterContractsByCategory('Client Agreements')" style="cursor:pointer;">
+                        <div class="metric-header">
+                            <span class="metric-label">Client MSA & SLA Addendums</span>
+                            <div class="metric-icon" style="background:rgba(59,130,246,0.12); color:#2563EB;">🤝</div>
+                        </div>
+                        <div class="metric-value" id="contracts-metric-client">2</div>
+                        <div class="metric-trend trend-up">End-to-End RCM & KPI Terms</div>
+                    </div>
+                    <div class="metric-card" onclick="filterContractsByCategory('HR & Contractor')" style="cursor:pointer;">
+                        <div class="metric-header">
+                            <span class="metric-label">NDA, Freelance & HR Covenants</span>
+                            <div class="metric-icon" style="background:rgba(217,119,6,0.12); color:#D97706;">✒️</div>
+                        </div>
+                        <div class="metric-value" id="contracts-metric-hr">4</div>
+                        <div class="metric-trend trend-up">Zero-Trust & IP Protected</div>
+                    </div>
+                </div>
+
+                <!-- Category Filter Pills & Search -->
+                <div class="data-card" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem;">
+                    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1rem;">
+                        <div style="display:flex; flex-wrap:wrap; gap:0.5rem;" id="contracts-category-pills">
+                            <button class="btn-secondary active-cat-pill" data-cat="all" onclick="filterContractsByCategory('all')" style="font-size:0.78rem; padding:0.4rem 0.85rem; background:#991B1B; color:#fff; border-color:#991B1B;">All Contracts</button>
+                            <button class="btn-secondary" data-cat="HIPAA & Compliance" onclick="filterContractsByCategory('HIPAA & Compliance')" style="font-size:0.78rem; padding:0.4rem 0.85rem;">HIPAA & BAA</button>
+                            <button class="btn-secondary" data-cat="Confidentiality & NDA" onclick="filterContractsByCategory('Confidentiality & NDA')" style="font-size:0.78rem; padding:0.4rem 0.85rem;">Mutual NDA</button>
+                            <button class="btn-secondary" data-cat="Client Agreements" onclick="filterContractsByCategory('Client Agreements')" style="font-size:0.78rem; padding:0.4rem 0.85rem;">Client Service (MSA / SLA)</button>
+                            <button class="btn-secondary" data-cat="HR & Contractor" onclick="filterContractsByCategory('HR & Contractor')" style="font-size:0.78rem; padding:0.4rem 0.85rem;">Freelance & Employment</button>
+                            <button class="btn-secondary" data-cat="Credentialing & Payer" onclick="filterContractsByCategory('Credentialing & Payer')" style="font-size:0.78rem; padding:0.4rem 0.85rem;">Credentialing LOA</button>
+                        </div>
+                        <div style="min-width:260px; flex:1; max-width:360px;">
+                            <input type="text" id="contracts-search-input" class="form-input" placeholder="Search BAA, NDA, Freelance, CSA or {{PLACEHOLDER}}..." oninput="renderContractsView()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contract Templates Cards Grid -->
+                <div id="contracts-grid-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(390px, 1fr)); gap:1.25rem;"></div>
+            </section>
+
             <!-- 10. PROFILE & CREDENTIALS VIEW -->
             <section id="view-profile" class="view-section">
                 <div class="page-header">
@@ -3732,6 +3813,9 @@
                         <label style="display:flex; align-items:center; gap:0.45rem; cursor:pointer;">
                             <input type="checkbox" class="staff-mod-cb" value="documents" checked> Document Storage Vaults
                         </label>
+                        <label style="display:flex; align-items:center; gap:0.45rem; cursor:pointer; color:#D97706;" title="Restricted to Higher Professionals (CEO, Directors, Managers)">
+                            <input type="checkbox" class="staff-mod-cb" value="contracts"> Contracts
+                        </label>
                     </div>
                 </div>
 
@@ -3933,6 +4017,102 @@
                 <input type="text" id="new-dm-search-input" class="form-input" placeholder="Search RCM Manager, Team Lead, Specialists, BDE..." oninput="renderNewDmUsersList(this.value)">
             </div>
             <div id="new-dm-users-list" style="display:flex; flex-direction:column; gap:0.55rem; max-height:340px; overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Create / Edit Corporate Contract Template -->
+    <div id="modal-contract" class="modal-overlay" onclick="closeModal('modal-contract')">
+        <div class="modal-card" style="max-width: 780px; max-height: 92vh; overflow-y: auto;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-contract-title">Create Corporate Contract Template</div>
+                <button class="modal-close-btn" onclick="closeModal('modal-contract')">&times;</button>
+            </div>
+            <form onsubmit="handleSaveContract(event)" style="display:flex; flex-direction:column; gap:1rem;">
+                <input type="hidden" id="form-cnt-id">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Contract Template Title</label>
+                        <input type="text" id="form-cnt-title" class="form-input" required placeholder="e.g. HIPAA Business Associate Agreement (BAA)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Template Reference Code</label>
+                        <input type="text" id="form-cnt-code" class="form-input" required placeholder="e.g. ZRC-LGL-BAA-01">
+                    </div>
+                </div>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Contract Category</label>
+                        <select id="form-cnt-category" class="form-input">
+                            <option value="HIPAA & Compliance">HIPAA & Compliance (BAA / Security)</option>
+                            <option value="Confidentiality & NDA">Confidentiality & NDA</option>
+                            <option value="Client Agreements">Client Agreements (MSA / CSA / SLA)</option>
+                            <option value="HR & Contractor">HR & Contractor (Freelance / Employment)</option>
+                            <option value="Credentialing & Payer">Credentialing & Payer Enrollment (LOA)</option>
+                            <option value="Vendor & Clearinghouse">Vendor & Clearinghouse Addendum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Version & Governance Level</label>
+                        <input type="text" id="form-cnt-version" class="form-input" value="v1.0 (2026 Corporate Standard)" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Executive Summary / Purpose</label>
+                    <input type="text" id="form-cnt-summary" class="form-input" required placeholder="Brief description of when this contract template is used...">
+                </div>
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                        <label class="form-label" style="margin-bottom:0;">Contract Clauses & Body (Use <code style="color:#991B1B; font-weight:700;">{{PLACEHOLDER_NAME}}</code> for dynamic fields)</label>
+                        <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+                            <button type="button" class="btn-secondary" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="insertPlaceholderTag('EFFECTIVE_DATE')">+ {{EFFECTIVE_DATE}}</button>
+                            <button type="button" class="btn-secondary" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="insertPlaceholderTag('CLIENT_LEGAL_NAME')">+ {{CLIENT_LEGAL_NAME}}</button>
+                            <button type="button" class="btn-secondary" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="insertPlaceholderTag('COLLECTION_FEE_PERCENT')">+ {{COLLECTION_FEE_PERCENT}}</button>
+                            <button type="button" class="btn-secondary" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="insertPlaceholderTag('SIGNATORY_NAME')">+ {{SIGNATORY_NAME}}</button>
+                        </div>
+                    </div>
+                    <textarea id="form-cnt-body" class="form-input" rows="13" required style="font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.5;" placeholder="Enter full legal contract text with {{PLACEHOLDERS}}..."></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('modal-contract')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Contract Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Fill Placeholders & Generate / Print / Save Contract -->
+    <div id="modal-contract-preview" class="modal-overlay" onclick="closeModal('modal-contract-preview')">
+        <div class="modal-card" style="max-width: 1040px; width: 95%; max-height: 92vh; overflow-y: auto;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="preview-cnt-title">Generate Contract from Template</div>
+                    <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;" id="preview-cnt-subtitle">Fill in the placeholders on the left to live-populate the executable agreement on the right.</div>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal('modal-contract-preview')">&times;</button>
+            </div>
+            <div style="display:grid; grid-template-columns: 340px 1fr; gap:1.25rem; align-items:start;">
+                <!-- Left Column: Dynamic Placeholder Inputs -->
+                <div style="background:#F8FAFC; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1rem; max-height:68vh; overflow-y:auto;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">📌 Dynamic Placeholders</span>
+                        <button type="button" class="btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.55rem;" onclick="autoFillSamplePlaceholders()">Auto-Fill Sample</button>
+                    </div>
+                    <div id="preview-placeholders-form" style="display:flex; flex-direction:column; gap:0.7rem;"></div>
+                </div>
+                <!-- Right Column: Live Contract Document Preview -->
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <span style="font-size:0.78rem; font-weight:700; color:#991B1B;">LIVE EXECUTABLE CONTRACT PREVIEW</span>
+                        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                            <button type="button" class="btn-secondary" style="font-size:0.75rem; padding:0.35rem 0.7rem;" onclick="copyGeneratedContract()">📋 Copy Text</button>
+                            <button type="button" class="btn-secondary" style="font-size:0.75rem; padding:0.35rem 0.7rem;" onclick="downloadGeneratedContractDoc()">⬇️ Download (.DOC / .TXT)</button>
+                            <button type="button" class="btn-secondary" style="font-size:0.75rem; padding:0.35rem 0.7rem;" onclick="printGeneratedContract()">🖨️ Print / Save PDF</button>
+                            <button type="button" class="btn-primary" style="font-size:0.75rem; padding:0.35rem 0.8rem;" onclick="saveExecutedContractToVault()">🔒 Archive to Document Vault</button>
+                        </div>
+                    </div>
+                    <pre id="preview-cnt-rendered-body" style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:8px; padding:1.5rem; font-family:'Courier New', Courier, monospace; font-size:0.82rem; line-height:1.55; color:#0F172A; white-space:pre-wrap; word-wrap:break-word; max-height:60vh; overflow-y:auto; margin:0; box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);"></pre>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -4225,6 +4405,199 @@
     }
 ];
 
+const DEFAULT_CONTRACTS = [
+    {
+        "id": "CNT-001",
+        "code": "ZRC-LGL-BAA-01",
+        "title": "HIPAA Business Associate Agreement (BAA)",
+        "category": "HIPAA & Compliance",
+        "accessLevel": "Executive & Compliance",
+        "version": "v4.2 (2026 HIPAA Omnibus)",
+        "lastUpdated": "2026-10-15",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Mandatory HIPAA/HITECH Business Associate Agreement governing Protected Health Information (PHI) security, breach notification, and subcontractor compliance between Zencora Health Solutions and Covered Entities.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "CLIENT_LEGAL_NAME",
+            "CLIENT_ADDRESS",
+            "CLIENT_SIGNATORY_NAME",
+            "CLIENT_SIGNATORY_TITLE",
+            "BREACH_NOTICE_DAYS",
+            "STATE_JURISDICTION"
+        ],
+        "body": "====================================================================\n         HIPAA BUSINESS ASSOCIATE AGREEMENT (BAA)\n              ZENCORA HEALTH SOLUTIONS LLC\n====================================================================\n\nThis Business Associate Agreement (\"Agreement\" or \"BAA\") is entered into as of {{EFFECTIVE_DATE}} (\"Effective Date\"), by and between:\n\nCOVERED ENTITY: {{CLIENT_LEGAL_NAME}}, with its principal place of business at {{CLIENT_ADDRESS}} (\"Covered Entity\"), and\nBUSINESS ASSOCIATE: Zencora Health Solutions (\"Business Associate\" or \"Zencora RCM\").\n\n1. PURPOSE & RECITALS\nCovered Entity wishes to disclose certain Protected Health Information (\"PHI\") to Business Associate pursuant to an underlying Revenue Cycle Management Services Agreement. Both Parties are committed to complying with the Health Insurance Portability and Accountability Act of 1996 (\"HIPAA\"), the HITECH Act, and 45 C.F.R. Parts 160 and 164.\n\n2. PERMITTED USES AND DISCLOSURES OF PHI\n2.1 Business Associate may use and disclose PHI solely to perform medical coding, charge capture, claims submission, EDI clearinghouse management, denial management, accounts receivable follow-up, and patient billing services on behalf of Covered Entity.\n2.2 Business Associate shall not use or disclose PHI in any manner that would violate the HIPAA Privacy Rule if done by Covered Entity.\n\n3. SAFEGUARDS & HIPAA SECURITY RULE COMPLIANCE\n3.1 Business Associate shall implement administrative, physical, and technical safeguards (including AES-256 encryption at rest and TLS 1.3 in transit) that reasonably and appropriately protect the confidentiality, integrity, and availability of Electronic PHI (\"ePHI\").\n3.2 Business Associate shall ensure that any workforce member, coder, or subcontractor accessing PHI executes a binding confidentiality and HIPAA compliance agreement.\n\n4. REPORTING OF SECURITY INCIDENTS & BREACH NOTIFICATION\n4.1 Business Associate shall report to Covered Entity any unauthorized use or disclosure of Unsecured PHI or Security Incident without unreasonable delay, and in no case later than {{BREACH_NOTICE_DAYS}} calendar days after discovery.\n\n5. TERM, TERMINATION & RETURN/DESTRUCTION OF PHI\n5.1 This BAA shall remain in effect for the duration of the Master RCM Service Agreement. Upon termination, Business Associate shall return or securely destroy all PHI in accordance with NIST SP 800-88 standards.\n\n6. GOVERNING LAW\nThis Agreement shall be governed by HIPAA federal regulations and the laws of the State of {{STATE_JURISDICTION}}.\n\nIN WITNESS WHEREOF, the Parties have executed this HIPAA Business Associate Agreement as of {{EFFECTIVE_DATE}}.\n\nFOR COVERED ENTITY ({{CLIENT_LEGAL_NAME}}):\nSignature : _______________________________\nName      : {{CLIENT_SIGNATORY_NAME}}\nTitle     : {{CLIENT_SIGNATORY_TITLE}}\nDate      : {{EFFECTIVE_DATE}}\n\nFOR BUSINESS ASSOCIATE (ZENCORA HEALTH SOLUTIONS):\nSignature : _______________________________\nName      : Mujibu Rahuman P M\nTitle     : Founder & Chief Executive Officer\nDate      : {{EFFECTIVE_DATE}}"
+    },
+    {
+        "id": "CNT-002",
+        "code": "ZRC-LGL-NDA-02",
+        "title": "Mutual Non-Disclosure & Confidentiality Agreement (NDA)",
+        "category": "Confidentiality & NDA",
+        "accessLevel": "Executive & Management",
+        "version": "v3.1",
+        "lastUpdated": "2026-10-12",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Bilateral corporate NDA protecting proprietary RCM workflows, payer fee schedules, financial metrics, client lists, and trade secrets during prospective client, vendor, or partner evaluations.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "COUNTERPARTY_NAME",
+            "COUNTERPARTY_TYPE",
+            "COUNTERPARTY_ADDRESS",
+            "BUSINESS_PURPOSE",
+            "CONFIDENTIALITY_TERM_YEARS",
+            "STATE_JURISDICTION",
+            "SIGNATORY_NAME",
+            "SIGNATORY_TITLE"
+        ],
+        "body": "====================================================================\n      MUTUAL NON-DISCLOSURE & CONFIDENTIALITY AGREEMENT (NDA)\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nThis Mutual Non-Disclosure Agreement (\"Agreement\") is entered into on {{EFFECTIVE_DATE}} (\"Effective Date\") between:\n\nPARTY A: Zencora Health Solutions (\"Zencora\"), and\nPARTY B: {{COUNTERPARTY_NAME}}, a {{COUNTERPARTY_TYPE}} located at {{COUNTERPARTY_ADDRESS}} (\"Counterparty\").\n\n1. PURPOSE OF DISCLOSURE\nThe Parties wish to explore a potential business relationship concerning {{BUSINESS_PURPOSE}} (the \"Permitted Purpose\"), in connection with which each Party may disclose proprietary and Confidential Information to the other.\n\n2. DEFINITION OF CONFIDENTIAL INFORMATION\n\"Confidential Information\" includes all non-public business, financial, clinical, technical, operational, and commercial data, including without limitation: RCM pricing models, payer reimbursement rates, coding audit methodologies, software architecture, client rosters, employee records, and SOPs.\n\n3. OBLIGATIONS OF RECEIVING PARTY\n3.1 The Receiving Party shall hold all Confidential Information in strict confidence using at least the same degree of care it uses to protect its own proprietary data (and never less than reasonable care).\n3.2 The Receiving Party shall not disclose Confidential Information to any third party without prior written authorization and shall restrict internal access strictly to leadership and personnel with a bona fide need to know.\n\n4. EXCLUSIONS\nConfidential Information does not include information that is publicly available through no breach of this Agreement, was rightfully known prior to disclosure, or is independently developed without reference to Disclosing Party's materials.\n\n5. TERM & SURVIVAL\nThis Agreement shall remain in force for {{CONFIDENTIALITY_TERM_YEARS}} years from the Effective Date. Trade secrets shall remain protected for so long as they qualify as trade secrets under applicable law.\n\n6. GOVERNING LAW & REMEDIES\nThis Agreement is governed by the laws of {{STATE_JURISDICTION}}. The Parties acknowledge that any breach may cause irreparable harm entitling the Disclosing Party to immediate injunctive relief.\n\nEXECUTED BY AUTHORIZED REPRESENTATIVES:\n\nFOR {{COUNTERPARTY_NAME}}:\nSignature : _______________________________\nName      : {{SIGNATORY_NAME}}\nTitle     : {{SIGNATORY_TITLE}}\nDate      : {{EFFECTIVE_DATE}}\n\nFOR ZENCORA HEALTH SOLUTIONS:\nSignature : _______________________________\nName      : Mujibu Rahuman P M\nTitle     : Founder & CEO\nDate      : {{EFFECTIVE_DATE}}"
+    },
+    {
+        "id": "CNT-003",
+        "code": "ZRC-LGL-CSA-03",
+        "title": "Master Client RCM Service Agreement (MSA / CSA)",
+        "category": "Client Agreements",
+        "accessLevel": "CEO & Directors Only",
+        "version": "v5.0",
+        "lastUpdated": "2026-10-18",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Comprehensive end-to-end Revenue Cycle Management Master Service Agreement defining scope of services, percentage of collections/FTE fee structure, payment terms, SLAs, and contract renewal terms.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "CLIENT_PRACTICE_NAME",
+            "PRACTICE_SPECIALTY",
+            "CLIENT_ADDRESS",
+            "PROVIDER_COUNT",
+            "EHR_SYSTEM",
+            "COLLECTION_FEE_PERCENT",
+            "MONTHLY_MINIMUM_FEE",
+            "INVOICE_DUE_DAYS",
+            "INITIAL_TERM_MONTHS",
+            "CLIENT_SIGNATORY_NAME",
+            "CLIENT_SIGNATORY_TITLE"
+        ],
+        "body": "====================================================================\n        MASTER CLIENT RCM SERVICE AGREEMENT (MSA / CSA)\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nThis Master Client RCM Service Agreement (\"Agreement\") is made effective as of {{EFFECTIVE_DATE}} (\"Effective Date\") by and between:\n\nCLIENT PRACTICE: {{CLIENT_PRACTICE_NAME}} (Specialty: {{PRACTICE_SPECIALTY}}), located at {{CLIENT_ADDRESS}} (\"Client\"), and\nSERVICE PROVIDER: Zencora Health Solutions (\"Zencora RCM\").\n\n1. SCOPE OF REVENUE CYCLE MANAGEMENT SERVICES\nZencora RCM shall provide comprehensive end-to-end Revenue Cycle Management for Client's {{PROVIDER_COUNT}} rendering provider(s) utilizing the {{EHR_SYSTEM}} EHR/PM platform:\n  (a) Patient Demographics & Real-Time Eligibility / Prior Authorization Verification\n  (b) Certified Medical Coding (ICD-10-CM, CPT, HCPCS) & Charge Scrubbing\n  (c) Electronic Claim Submission (EDI 837P/837I) & Clearinghouse Rejection Resolution\n  (d) ERA/EFT Payment Posting (EDI 835) & Contractual Adjustment Reconciliation\n  (e) Aggressive Denial Management, Clinical Appeals & Old AR Recovery (>30/60/90/120 Days)\n  (f) Monthly Executive Financial & KPI Reporting\n\n2. COMPENSATION & BILLING TERMS\n2.1 Contingency Collection Fee: Client shall pay Zencora RCM a service fee equal to {{COLLECTION_FEE_PERCENT}}% of net monthly collections posted to Client's bank account(s), subject to a monthly minimum retainer of ${{MONTHLY_MINIMUM_FEE}} USD.\n2.2 Invoicing & Payment: Zencora RCM shall issue itemized monthly invoices on the 1st business day of each month. Payment is due within {{INVOICE_DUE_DAYS}} calendar days of invoice date via ACH or wire transfer.\n\n3. PERFORMANCE BENCHMARKS (KPIs)\nZencora RCM commits to maintaining the following operational targets:\n  - First-Pass Clean Claim Rate : >= 96.5%\n  - Charge Lag Time             : <= 24 - 48 Hours from Superbill lock\n  - Payment Posting Turnaround  : <= 24 Hours from ERA receipt\n\n4. TERM AND TERMINATION\n4.1 Initial Term: This Agreement shall commence on {{EFFECTIVE_DATE}} and continue for an initial term of {{INITIAL_TERM_MONTHS}} months, automatically renewing for successive 12-month periods unless either Party provides 60 days' prior written notice.\n\n5. COMPLIANCE & DATA OWNERSHIP\nAll clinical records and patient data remain the sole property of Client. The Parties have concurrently executed a HIPAA Business Associate Agreement (BAA) incorporated herein by reference.\n\nIN WITNESS WHEREOF, the Parties have executed this Agreement as of {{EFFECTIVE_DATE}}.\n\nFOR {{CLIENT_PRACTICE_NAME}}:\nSignature : _______________________________\nName      : {{CLIENT_SIGNATORY_NAME}}\nTitle     : {{CLIENT_SIGNATORY_TITLE}}\n\nFOR ZENCORA HEALTH SOLUTIONS:\nSignature : _______________________________\nName      : Mujibu Rahuman P M\nTitle     : Founder & Chief Executive Officer"
+    },
+    {
+        "id": "CNT-004",
+        "code": "ZRC-LGL-FRL-04",
+        "title": "Freelance / Independent Contractor RCM Specialist Agreement",
+        "category": "HR & Contractor",
+        "accessLevel": "Executive, Managers & HR",
+        "version": "v2.8",
+        "lastUpdated": "2026-10-10",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Independent contractor agreement for freelance medical coders, AR callers, credentialing specialists, and consultants, covering deliverables, HIPAA zero-trust rules, non-solicitation, and compensation.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "CONTRACTOR_NAME",
+            "CONTRACTOR_ROLE",
+            "CONTRACTOR_ADDRESS",
+            "COMPENSATION_RATE",
+            "BILLING_FREQUENCY",
+            "ACCURACY_SLA_PERCENT",
+            "NON_SOLICIT_MONTHS",
+            "STATE_JURISDICTION"
+        ],
+        "body": "====================================================================\n     FREELANCE / INDEPENDENT CONTRACTOR RCM AGREEMENT\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nThis Independent Contractor Agreement (\"Agreement\") is made effective as of {{EFFECTIVE_DATE}} between:\n\nCOMPANY: Zencora Health Solutions (\"Company\"), and\nCONTRACTOR: {{CONTRACTOR_NAME}}, residing at {{CONTRACTOR_ADDRESS}} (\"Contractor\").\n\n1. ENGAGEMENT & SCOPE OF SERVICES\nCompany hereby engages Contractor as an Independent Contractor in the capacity of {{CONTRACTOR_ROLE}}. Contractor shall perform assigned medical coding, AR follow-up, claim auditing, or revenue cycle tasks in strict accordance with Company SOPs and a minimum quality accuracy benchmark of {{ACCURACY_SLA_PERCENT}}%.\n\n2. COMPENSATION\n2.1 Rate: Company shall pay Contractor {{COMPENSATION_RATE}}, payable on a {{BILLING_FREQUENCY}} basis upon verification of completed production logs and QA audit clearance.\n2.2 Independent Contractor Status: Contractor is an independent professional and not an employee of Company. Contractor is solely responsible for all applicable taxes, insurance, and statutory filings.\n\n3. STRICT HIPAA, ZERO-TRUST & DATA SECURITY MANDATE\n3.1 Contractor shall access client EHRs and PHI exclusively through Company-authorized VDI/VPN environments.\n3.2 Contractor is strictly prohibited from downloading, screenshotting, printing, or storing any Protected Health Information (PHI) or client data on personal devices. Any violation constitutes grounds for immediate termination and legal action.\n\n4. INTELLECTUAL PROPERTY & WORK MADE FOR HIRE\nAll work product, audit templates, appeals letters, and documentation created by Contractor for Company shall be the sole and exclusive property of Zencora Health Solutions.\n\n5. NON-SOLICITATION OF CLIENTS & STAFF\nDuring the term of this Agreement and for {{NON_SOLICIT_MONTHS}} months thereafter, Contractor shall not directly or indirectly solicit, divert, or provide competing services to any medical practice client or employee of Zencora Health Solutions.\n\n6. GOVERNING LAW\nThis Agreement shall be governed by the laws of {{STATE_JURISDICTION}}.\n\nACCEPTED AND AGREED:\n\nCONTRACTOR ({{CONTRACTOR_NAME}}):\nSignature : _______________________________\nRole      : {{CONTRACTOR_ROLE}}\nDate      : {{EFFECTIVE_DATE}}\n\nFOR ZENCORA HEALTH SOLUTIONS:\nSignature : _______________________________\nName      : Mujibu Rahuman P M (Founder & CEO)\nDate      : {{EFFECTIVE_DATE}}"
+    },
+    {
+        "id": "CNT-005",
+        "code": "ZRC-LGL-EMP-05",
+        "title": "Full-Time Employment, Confidentiality & HIPAA Covenant",
+        "category": "HR & Contractor",
+        "accessLevel": "Executive, Managers & HR",
+        "version": "v3.4",
+        "lastUpdated": "2026-10-14",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Standard corporate employment contract for full-time Zencora RCM staff (Coders, AR Specialists, Team Leads, Managers) detailing compensation, KPI appraisal matrices, HIPAA compliance, and IP protection.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "EMPLOYEE_NAME",
+            "EMPLOYEE_CODE",
+            "DESIGNATION_ROLE",
+            "DEPARTMENT",
+            "REPORTING_MANAGER",
+            "MONTHLY_COMPENSATION",
+            "PROBATION_MONTHS",
+            "NOTICE_PERIOD_DAYS"
+        ],
+        "body": "====================================================================\n   FULL-TIME EMPLOYMENT, CONFIDENTIALITY & HIPAA COVENANT\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nDate: {{EFFECTIVE_DATE}}\nEmployee Name: {{EMPLOYEE_NAME}} (Staff ID: {{EMPLOYEE_CODE}})\n\n1. APPOINTMENT & DESIGNATION\nZencora Health Solutions (\"Company\") is pleased to appoint {{EMPLOYEE_NAME}} as {{DESIGNATION_ROLE}} in the {{DEPARTMENT}} department, reporting directly to {{REPORTING_MANAGER}}, effective {{EFFECTIVE_DATE}}.\n\n2. COMPENSATION & KPI APPRAISAL MATRIX\n2.1 Your gross compensation shall be {{MONTHLY_COMPENSATION}}, subject to statutory deductions.\n2.2 Your performance will be evaluated under the Zencora KPI Appraisal Matrix based on Clean Claim Rate, Coding/Billing Accuracy, SLA Turnaround Time, and AR Recovery targets.\n\n3. PROBATION & NOTICE PERIOD\n3.1 You will serve an initial probationary period of {{PROBATION_MONTHS}} months from your date of joining.\n3.2 Following confirmation, either Party may terminate employment by providing {{NOTICE_PERIOD_DAYS}} calendar days' written notice or salary in lieu thereof.\n\n4. HIPAA COMPLIANCE & WORKSPACE SECURITY\nYou shall strictly adhere to HIPAA Privacy and Security Rules, Zencora Clean-Desk Policies, and Role-Based Module Access permissions. Unauthorized sharing of login credentials or PHI is strictly prohibited.\n\n5. CONFIDENTIALITY & NON-SOLICITATION\nYou shall not disclose any Company trade secrets, client lists, pricing structures, or internal communications during or after your employment.\n\nACKNOWLEDGED AND ACCEPTED:\n\nEMPLOYEE SIGNATURE : _______________________________\nEmployee Name      : {{EMPLOYEE_NAME}}\nDate               : {{EFFECTIVE_DATE}}\n\nFOR ZENCORA HEALTH SOLUTIONS:\nAuthorized Signatory: Mujibu Rahuman P M (Founder & CEO)"
+    },
+    {
+        "id": "CNT-006",
+        "code": "ZRC-LGL-LOA-06",
+        "title": "Provider Credentialing & Payer Enrollment Letter of Authorization (LOA)",
+        "category": "Credentialing & Payer",
+        "accessLevel": "Executive & Managers",
+        "version": "v2.5",
+        "lastUpdated": "2026-10-08",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Limited Power of Attorney and Letter of Authorization empowering Zencora Credentialing Specialists to manage CAQH ProView, PECOS, NPPES, Medicare/Medicaid, and commercial payer enrollments.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "PRACTICE_LEGAL_NAME",
+            "TAX_ID_EIN",
+            "GROUP_NPI",
+            "PROVIDER_FULL_NAME",
+            "INDIVIDUAL_NPI",
+            "CAQH_ID",
+            "SIGNATORY_NAME",
+            "SIGNATORY_TITLE"
+        ],
+        "body": "====================================================================\n   PROVIDER CREDENTIALING & PAYER ENROLLMENT AUTHORIZATION (LOA)\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nDate: {{EFFECTIVE_DATE}}\n\nTO WHOM IT MAY CONCERN (CMS / PECOS / CAQH / COMMERCIAL PAYERS & CLEARINGHOUSES):\n\nPractice Legal Name : {{PRACTICE_LEGAL_NAME}}\nFederal Tax ID (EIN): {{TAX_ID_EIN}}\nGroup Type-2 NPI    : {{GROUP_NPI}}\nProvider Name       : {{PROVIDER_FULL_NAME}} (Individual Type-1 NPI: {{INDIVIDUAL_NPI}} | CAQH ID: {{CAQH_ID}})\n\n1. GRANT OF LIMITED AUTHORIZATION\n{{PRACTICE_LEGAL_NAME}} (\"Practice\") hereby authorizes Zencora Health Solutions and its designated Credentialing & Enrollment Specialists to act as Practice's authorized agent for the purpose of:\n  (a) Completing, submitting, and tracking Medicare (PECOS), Medicaid, and Commercial Payer credentialing and re-credentialing applications;\n  (b) Accessing and maintaining CAQH ProView profiles, NPPES registries, and state licensing portals;\n  (c) Setting up EDI 837 claim submission, ERA (835), and EFT enrollment linkages with clearinghouses and payers;\n  (d) Communicating with payer provider-enrollment representatives to resolve enrollment holds or fee schedule inquiries.\n\n2. VALIDITY\nThis authorization shall remain in full force and effect until revoked in writing by Practice. A photocopy or electronic PDF of this authorization shall be as valid as the original.\n\nAUTHORIZED BY {{PRACTICE_LEGAL_NAME}}:\n\nSignature : _______________________________\nName      : {{SIGNATORY_NAME}}\nTitle     : {{SIGNATORY_TITLE}}\nDate      : {{EFFECTIVE_DATE}}"
+    },
+    {
+        "id": "CNT-007",
+        "code": "ZRC-LGL-SLA-07",
+        "title": "Service Level Agreement (SLA) & RCM KPI Performance Addendum",
+        "category": "Client Agreements",
+        "accessLevel": "Executive & Managers",
+        "version": "v3.0",
+        "lastUpdated": "2026-10-16",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Quantitative SLA addendum annexed to Master Client Agreements specifying turnaround times for charge entry, payment posting, denial appeals, clean claim rate thresholds, and escalation governance.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "CLIENT_PRACTICE_NAME",
+            "CLEAN_CLAIM_TARGET",
+            "CHARGE_ENTRY_SLA_HOURS",
+            "PAYMENT_POSTING_SLA_HOURS",
+            "DENIAL_APPEAL_SLA_DAYS",
+            "AR_DAYS_TARGET",
+            "ACCOUNT_MANAGER_NAME"
+        ],
+        "body": "====================================================================\n   SERVICE LEVEL AGREEMENT (SLA) & KPI PERFORMANCE ADDENDUM\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nThis SLA Addendum is incorporated into the Master RCM Service Agreement effective {{EFFECTIVE_DATE}} between Zencora Health Solutions and {{CLIENT_PRACTICE_NAME}}.\n\n1. CORE OPERATIONAL SLA METRICS\nZencora Health Solutions guarantees the following operational turnaround standards:\n  - First-Pass Clean Claim Rate     : >= {{CLEAN_CLAIM_TARGET}}%\n  - Charge Entry & Coding Turnaround: Within {{CHARGE_ENTRY_SLA_HOURS}} business hours of signed encounter\n  - ERA / Check Payment Posting     : Within {{PAYMENT_POSTING_SLA_HOURS}} business hours of receipt\n  - Claim Denial Appeal Submission  : Within {{DENIAL_APPEAL_SLA_DAYS}} business days of denial posting\n  - Days in Accounts Receivable (AR): Maintained below {{AR_DAYS_TARGET}} days\n\n2. ESCALATION & GOVERNANCE MATRIX\n  - Tier 1 (Operational Desk): Assigned Dedicated RCM Specialist ({{ACCOUNT_MANAGER_NAME}}) - Response < 4 Hours\n  - Tier 2 (Operations Manager): RCM Operations Manager - Response < 12 Hours\n  - Tier 3 (Executive Leadership): Mujibu Rahuman P M (Founder & CEO) - Priority Executive Resolution\n\n3. MONTHLY GOVERNANCE REVIEW\nBoth Parties shall conduct a Monthly Executive RCM Performance Review covering aging AR buckets (0-30, 31-60, 61-90, 91-120, 120+ days), payer denial root-cause analysis, and net collection velocity.\n\nAPPROVED BY:\nClient Practice : {{CLIENT_PRACTICE_NAME}}\nZencora Account Lead: {{ACCOUNT_MANAGER_NAME}}\nEffective Date  : {{EFFECTIVE_DATE}}"
+    },
+    {
+        "id": "CNT-008",
+        "code": "ZRC-LGL-EHR-08",
+        "title": "EHR, Clearinghouse & IT System Access Security Addendum",
+        "category": "HIPAA & Compliance",
+        "accessLevel": "Executive & Managers",
+        "version": "v2.2",
+        "lastUpdated": "2026-10-11",
+        "owner": "Mujibu Rahuman P M (CEO)",
+        "status": "Active Template",
+        "summary": "Technical security addendum governing VPN/SSO provisioning, named-user EHR credentials, clearinghouse SFTP keys, audit logging, and 24-hour credential revocation protocols.",
+        "placeholders": [
+            "EFFECTIVE_DATE",
+            "CLIENT_PRACTICE_NAME",
+            "EHR_PLATFORM_NAME",
+            "CLEARINGHOUSE_NAME",
+            "ASSIGNED_TEAM_COUNT",
+            "REVOCATION_SLA_HOURS",
+            "CLIENT_IT_CONTACT"
+        ],
+        "body": "====================================================================\n   EHR, CLEARINGHOUSE & IT SYSTEM ACCESS SECURITY ADDENDUM\n                 ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nEffective Date: {{EFFECTIVE_DATE}}\nClient Practice: {{CLIENT_PRACTICE_NAME}}\nPrimary EHR/PM : {{EHR_PLATFORM_NAME}} | Clearinghouse: {{CLEARINGHOUSE_NAME}}\n\n1. NAMED-USER CREDENTIAL PROVISIONING\nClient IT Contact ({{CLIENT_IT_CONTACT}}) shall provision individual, role-restricted user accounts for {{ASSIGNED_TEAM_COUNT}} authorized Zencora RCM specialists. Shared credentials across multiple users are strictly prohibited under HIPAA Security Rule 45 C.F.R. 164.312(a)(2)(i).\n\n2. MULTI-FACTOR AUTHENTICATION (MFA) & IP WHITELISTING\nAll remote connections to {{EHR_PLATFORM_NAME}} and {{CLEARINGHOUSE_NAME}} shall enforce Multi-Factor Authentication (MFA) and encrypted TLS/VPN tunnels.\n\n3. DEPROVISIONING & ACCESS REVOCATION SLA\nUpon reassignment or separation of any Zencora specialist, Zencora Management shall notify Client IT within {{REVOCATION_SLA_HOURS}} hours to revoke system credentials immediately.\n\nEXECUTED AS OF {{EFFECTIVE_DATE}}:\nFor {{CLIENT_PRACTICE_NAME}} (IT/Compliance): {{CLIENT_IT_CONTACT}}\nFor Zencora Health Solutions: Mujibu Rahuman P M (Founder & CEO)"
+    }
+];
+
         let dbState = {
             clients: [],
             projects: [],
@@ -4239,7 +4612,8 @@
             birthdayWishes: [],
             messages: [],
             clientDocuments: [],
-            staffDocuments: []
+            staffDocuments: [],
+            contracts: [...DEFAULT_CONTRACTS]
         };
         let activeClientWsId = null;
         let activeStaffWsId = null;
@@ -4249,7 +4623,7 @@
         let localMediaStream = null;
         let inAppMicMuted = false;
 
-        const ALL_MODULE_KEYS = ['dashboard', 'clients', 'projects', 'desk', 'finance', 'communications', 'meetings', 'staff', 'documents'];
+        const ALL_MODULE_KEYS = ['dashboard', 'clients', 'projects', 'desk', 'finance', 'communications', 'meetings', 'staff', 'documents', 'contracts'];
 
         document.addEventListener('DOMContentLoaded', () => {
             checkSession();
@@ -4309,7 +4683,8 @@
                 'birthday-wishes': 'birthdayWishes',
                 'messages': 'messages',
                 'client-documents': 'clientDocuments',
-                'staff-documents': 'staffDocuments'
+                'staff-documents': 'staffDocuments',
+                'contracts': 'contracts'
             };
 
             const reqHeaders = {};
@@ -4342,6 +4717,7 @@
             await Promise.allSettled(promises);
             if (!dbState.services || dbState.services.length === 0) dbState.services = [...DEFAULT_SERVICES];
             if (!dbState.pricingModels || dbState.pricingModels.length === 0) dbState.pricingModels = [...DEFAULT_PRICING_MODELS];
+            if (!dbState.contracts || dbState.contracts.length === 0) dbState.contracts = [...DEFAULT_CONTRACTS];
             updateBadges();
         }
 
@@ -4349,6 +4725,8 @@
             document.getElementById('badge-clients-count').innerText = dbState.clients.length;
             document.getElementById('badge-tasks-count').innerText = dbState.tasks.length;
             document.getElementById('badge-tickets-count').innerText = dbState.tickets.length;
+            const cntBadge = document.getElementById('badge-contracts-count');
+            if (cntBadge) cntBadge.innerText = (dbState.contracts || []).length;
             if (typeof updateUnreadMessageBadges === 'function') {
                 updateUnreadMessageBadges();
             }
@@ -4799,6 +5177,7 @@
             if (viewName === 'communications') renderCommunicationsView();
             if (viewName === 'staff') renderStaffView();
             if (viewName === 'documents') renderDocumentsView();
+            if (viewName === 'contracts') renderContractsView();
             if (viewName === 'profile') renderProfileView();
         }
 
@@ -8245,7 +8624,7 @@
             } else if (r.includes('credential')) {
                 preset = ['dashboard', 'clients', 'projects', 'desk', 'communications', 'meetings', 'documents'];
             } else if (r.includes('hr')) {
-                preset = ['dashboard', 'communications', 'meetings', 'staff', 'documents'];
+                preset = ['dashboard', 'communications', 'meetings', 'staff', 'documents', 'contracts'];
             }
             document.querySelectorAll('.staff-mod-cb').forEach(cb => {
                 cb.checked = preset.includes(cb.value);
@@ -8697,6 +9076,454 @@
             else if (q.includes('ticket') || q.includes('denial') || q.includes('edi')) switchNavView('desk');
             else if (q.includes('meet') || q.includes('mom')) switchNavView('meetings');
             else if (q.includes('vault') || q.includes('doc') || q.includes('upload')) switchNavView('documents');
+            else if (q.includes('contract') || q.includes('baa') || q.includes('nda') || q.includes('agreement') || q.includes('sla') || q.includes('freelance')) switchNavView('contracts');
+        }
+
+        // ----------------------------------------------------
+        // 9B. CORPORATE CONTRACTS & LEGAL TEMPLATES ENGINE
+        // ----------------------------------------------------
+        let activeContractCategory = 'all';
+        let activePreviewContractId = null;
+
+        function extractPlaceholdersFromText(text) {
+            const regex = /\{\{\s*([A-Z0-9_]+)\s*\}\}/g;
+            const found = [];
+            let m;
+            while ((m = regex.exec(text || '')) !== null) {
+                if (!found.includes(m[1])) found.push(m[1]);
+            }
+            return found;
+        }
+
+        function filterContractsByCategory(category) {
+            activeContractCategory = category || 'all';
+            document.querySelectorAll('#contracts-category-pills button').forEach(btn => {
+                const isMatch = btn.getAttribute('data-cat') === activeContractCategory;
+                btn.style.background = isMatch ? '#991B1B' : '';
+                btn.style.color = isMatch ? '#FFFFFF' : '';
+                btn.style.borderColor = isMatch ? '#991B1B' : '';
+            });
+            renderContractsView();
+        }
+
+        function renderContractsView() {
+            if (!Array.isArray(dbState.contracts) || dbState.contracts.length === 0) {
+                dbState.contracts = [...DEFAULT_CONTRACTS];
+            }
+            const contracts = dbState.contracts;
+            const searchQ = (document.getElementById('contracts-search-input')?.value || '').toLowerCase().trim();
+
+            const totalEl = document.getElementById('contracts-metric-total');
+            const hipaaEl = document.getElementById('contracts-metric-hipaa');
+            const clientEl = document.getElementById('contracts-metric-client');
+            const hrEl = document.getElementById('contracts-metric-hr');
+            if (totalEl) totalEl.innerText = contracts.length;
+            if (hipaaEl) hipaaEl.innerText = contracts.filter(c => (c.category || '').includes('HIPAA')).length;
+            if (clientEl) clientEl.innerText = contracts.filter(c => (c.category || '').includes('Client')).length;
+            if (hrEl) hrEl.innerText = contracts.filter(c => ['Confidentiality & NDA', 'HR & Contractor', 'Credentialing & Payer'].includes(c.category)).length;
+
+            const cntBadge = document.getElementById('badge-contracts-count');
+            if (cntBadge) cntBadge.innerText = contracts.length;
+
+            const filtered = contracts.filter(c => {
+                const catMatch = activeContractCategory === 'all' || c.category === activeContractCategory;
+                if (!catMatch) return false;
+                if (!searchQ) return true;
+                const hay = `${c.title} ${c.code} ${c.category} ${c.summary} ${(c.placeholders || []).join(' ')} ${c.body}`.toLowerCase();
+                return hay.includes(searchQ);
+            });
+
+            const container = document.getElementById('contracts-grid-container');
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="data-card" style="grid-column: 1 / -1; padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                        No contract templates match your current filter. Click <strong>+ Create Contract Template</strong> to add one.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(c => {
+                const placeholders = Array.isArray(c.placeholders) && c.placeholders.length > 0
+                    ? c.placeholders
+                    : extractPlaceholdersFromText(c.body);
+
+                const badgeTags = placeholders.slice(0, 5).map(p =>
+                    `<span style="font-size:0.68rem; font-family:monospace; background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; padding:0.15rem 0.45rem; border-radius:4px; font-weight:600;">{{${p}}}</span>`
+                ).join('');
+                const extraCount = placeholders.length > 5 ? `<span style="font-size:0.68rem; color:var(--text-muted); padding:0.15rem 0.3rem;">+${placeholders.length - 5} more</span>` : '';
+
+                return `
+                    <div class="data-card" style="padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between; gap:1rem; border-top:3px solid #991B1B;">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem;">
+                                <span class="status-pill" style="background:rgba(153,27,27,0.1); color:#991B1B; font-size:0.7rem; font-weight:700;">${c.category || 'Corporate Legal'}</span>
+                                <span style="font-size:0.72rem; font-family:monospace; color:var(--text-muted); font-weight:600;">${c.code || c.id} • ${c.version || 'v1.0'}</span>
+                            </div>
+                            <h3 style="font-size:1rem; font-weight:700; color:var(--text-main); margin:0 0 0.4rem 0;">${c.title}</h3>
+                            <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.45; margin:0 0 0.85rem 0;">${c.summary || ''}</p>
+                            <div style="margin-bottom:0.5rem;">
+                                <div style="font-size:0.7rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.35rem;">Dynamic Placeholders (${placeholders.length}):</div>
+                                <div style="display:flex; flex-wrap:wrap; gap:0.35rem;">${badgeTags}${extraCount}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.85rem; border-top:1px solid var(--border-color); gap:0.5rem; flex-wrap:wrap;">
+                            <div style="font-size:0.72rem; color:var(--text-muted);">Updated: <strong>${c.lastUpdated || '2026-10'}</strong></div>
+                            <div style="display:flex; gap:0.4rem;">
+                                <button class="btn-primary" style="padding:0.38rem 0.75rem; font-size:0.75rem;" onclick="openContractPreviewModal('${c.id}')">⚡ Use & Fill Placeholders</button>
+                                <button class="btn-secondary" style="padding:0.38rem 0.6rem; font-size:0.75rem;" onclick="openEditContractModal('${c.id}')" title="Edit Template">✏️</button>
+                                <button class="btn-secondary" style="padding:0.38rem 0.6rem; font-size:0.75rem;" onclick="duplicateContractTemplate('${c.id}')" title="Duplicate Template">📄</button>
+                                <button class="btn-secondary" style="padding:0.38rem 0.6rem; font-size:0.75rem; color:#DC2626;" onclick="deleteContractTemplate('${c.id}')" title="Delete Template">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function insertPlaceholderTag(tagName) {
+            const ta = document.getElementById('form-cnt-body');
+            if (!ta) return;
+            const token = `{{${tagName}}}`;
+            const start = ta.selectionStart || ta.value.length;
+            const end = ta.selectionEnd || ta.value.length;
+            ta.value = ta.value.substring(0, start) + token + ta.value.substring(end);
+            ta.focus();
+        }
+
+        function openNewContractModal() {
+            document.getElementById('form-cnt-id').value = '';
+            document.getElementById('modal-contract-title').innerText = 'Create New Corporate Contract Template';
+            document.getElementById('form-cnt-title').value = '';
+            document.getElementById('form-cnt-code').value = `ZRC-LGL-0${(dbState.contracts || []).length + 1}`;
+            document.getElementById('form-cnt-category').value = 'Client Agreements';
+            document.getElementById('form-cnt-version').value = 'v1.0 (2026 Corporate Standard)';
+            document.getElementById('form-cnt-summary').value = '';
+            document.getElementById('form-cnt-body').value = `====================================================================\n         CORPORATE RCM AGREEMENT - ZENCORA HEALTH SOLUTIONS\n====================================================================\n\nThis Agreement is entered into as of {{EFFECTIVE_DATE}} by and between:\n\nPARTY A: Zencora Health Solutions\nPARTY B: {{CLIENT_LEGAL_NAME}}, located at {{CLIENT_ADDRESS}}\n\n1. SCOPE OF SERVICES\nZencora Health Solutions shall provide Revenue Cycle Management services at a fee rate of {{COLLECTION_FEE_PERCENT}}%.\n\nAUTHORIZED SIGNATURES:\nFor {{CLIENT_LEGAL_NAME}}: {{SIGNATORY_NAME}} ({{SIGNATORY_TITLE}})\nFor Zencora Health Solutions: Mujibu Rahuman P M (Founder & CEO)`;
+            document.getElementById('modal-contract').style.display = 'flex';
+        }
+
+        function openEditContractModal(id) {
+            const cnt = (dbState.contracts || []).find(c => c.id === id);
+            if (!cnt) return;
+            document.getElementById('form-cnt-id').value = cnt.id;
+            document.getElementById('modal-contract-title').innerText = `Edit Contract Template: ${cnt.title}`;
+            document.getElementById('form-cnt-title').value = cnt.title || '';
+            document.getElementById('form-cnt-code').value = cnt.code || cnt.id;
+            document.getElementById('form-cnt-category').value = cnt.category || 'Client Agreements';
+            document.getElementById('form-cnt-version').value = cnt.version || 'v1.0';
+            document.getElementById('form-cnt-summary').value = cnt.summary || '';
+            document.getElementById('form-cnt-body').value = cnt.body || '';
+            document.getElementById('modal-contract').style.display = 'flex';
+        }
+
+        async function handleSaveContract(e) {
+            e.preventDefault();
+            const existingId = document.getElementById('form-cnt-id').value.trim();
+            const title = document.getElementById('form-cnt-title').value.trim();
+            const code = document.getElementById('form-cnt-code').value.trim();
+            const category = document.getElementById('form-cnt-category').value;
+            const version = document.getElementById('form-cnt-version').value.trim();
+            const summary = document.getElementById('form-cnt-summary').value.trim();
+            const body = document.getElementById('form-cnt-body').value;
+            const placeholders = extractPlaceholdersFromText(body);
+            const today = new Date().toISOString().slice(0, 10);
+
+            const payload = {
+                title, code, category, version, summary, body, placeholders,
+                accessLevel: 'Executive & Management',
+                lastUpdated: today,
+                owner: currentUser ? (currentUser.displayName || currentUser.username) : 'Mujibu Rahuman P M (CEO)',
+                status: 'Active Template'
+            };
+
+            if (existingId) {
+                payload.id = existingId;
+                const idx = dbState.contracts.findIndex(c => c.id === existingId);
+                if (idx !== -1) dbState.contracts[idx] = { ...dbState.contracts[idx], ...payload };
+                try {
+                    await fetch(`/api/contracts/${encodeURIComponent(existingId)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (err) {}
+            } else {
+                try {
+                    const res = await fetch('/api/contracts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const saved = await res.json();
+                        dbState.contracts.unshift(saved);
+                    } else {
+                        payload.id = 'CNT-' + String(dbState.contracts.length + 1).padStart(3, '0');
+                        dbState.contracts.unshift(payload);
+                    }
+                } catch (err) {
+                    payload.id = 'CNT-' + String(dbState.contracts.length + 1).padStart(3, '0');
+                    dbState.contracts.unshift(payload);
+                }
+            }
+
+            syncLocalDb();
+            closeModal('modal-contract');
+            renderContractsView();
+            updateBadges();
+        }
+
+        async function duplicateContractTemplate(id) {
+            const orig = (dbState.contracts || []).find(c => c.id === id);
+            if (!orig) return;
+            const copy = {
+                ...orig,
+                id: 'CNT-' + String((dbState.contracts || []).length + 1).padStart(3, '0'),
+                code: (orig.code || 'ZRC-LGL') + '-COPY',
+                title: orig.title + ' (Copy)',
+                lastUpdated: new Date().toISOString().slice(0, 10)
+            };
+            try {
+                const res = await fetch('/api/contracts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(copy)
+                });
+                if (res.ok) {
+                    const saved = await res.json();
+                    dbState.contracts.unshift(saved);
+                } else {
+                    dbState.contracts.unshift(copy);
+                }
+            } catch (e) {
+                dbState.contracts.unshift(copy);
+            }
+            syncLocalDb();
+            renderContractsView();
+            updateBadges();
+        }
+
+        async function deleteContractTemplate(id) {
+            if (!confirm('Are you sure you want to delete this corporate contract template?')) return;
+            dbState.contracts = (dbState.contracts || []).filter(c => c.id !== id);
+            try {
+                await fetch(`/api/contracts/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            } catch (e) {}
+            syncLocalDb();
+            renderContractsView();
+            updateBadges();
+        }
+
+        function openContractPreviewModal(id) {
+            const cnt = (dbState.contracts || []).find(c => c.id === id);
+            if (!cnt) return;
+            activePreviewContractId = cnt.id;
+            document.getElementById('preview-cnt-title').innerText = `${cnt.title} (${cnt.code || cnt.id})`;
+            document.getElementById('preview-cnt-subtitle').innerText = `Category: ${cnt.category} • Version: ${cnt.version || 'v1.0'} • Fill placeholders below to generate executable contract.`;
+
+            const placeholders = Array.isArray(cnt.placeholders) && cnt.placeholders.length > 0
+                ? cnt.placeholders
+                : extractPlaceholdersFromText(cnt.body);
+
+            const formContainer = document.getElementById('preview-placeholders-form');
+            const todayStr = new Date().toISOString().slice(0, 10);
+
+            if (placeholders.length === 0) {
+                formContainer.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted);">No dynamic {{PLACEHOLDERS}} detected in this template.</div>`;
+            } else {
+                formContainer.innerHTML = placeholders.map(ph => {
+                    const defaultVal = ph.includes('DATE') ? todayStr : '';
+                    return `
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label" style="font-size:0.72rem; font-family:monospace; color:#991B1B;">{{${ph}}}</label>
+                            <input type="text" class="form-input cnt-ph-input" data-ph="${ph}" value="${defaultVal}" placeholder="Enter ${ph.replace(/_/g, ' ').toLowerCase()}..." oninput="updateLiveContractPreview()">
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateLiveContractPreview();
+            document.getElementById('modal-contract-preview').style.display = 'flex';
+        }
+
+        function autoFillSamplePlaceholders() {
+            const firstClient = (dbState.clients && dbState.clients[0]) || { name: 'Apex Heart & Vascular Institute', specialty: 'Cardiology & Interventional Surgery' };
+            const sampleMap = {
+                EFFECTIVE_DATE: new Date().toISOString().slice(0, 10),
+                CLIENT_LEGAL_NAME: firstClient.name,
+                CLIENT_PRACTICE_NAME: firstClient.name,
+                PRACTICE_LEGAL_NAME: firstClient.name,
+                PRACTICE_SPECIALTY: firstClient.specialty || 'Multi-Specialty Medical Group',
+                CLIENT_ADDRESS: '450 Medical Center Parkway, Suite 300, Dallas, TX 75201',
+                COUNTERPARTY_NAME: firstClient.name,
+                COUNTERPARTY_TYPE: 'Professional Medical Corporation (PLLC)',
+                COUNTERPARTY_ADDRESS: '450 Medical Center Parkway, Suite 300, Dallas, TX 75201',
+                BUSINESS_PURPOSE: 'End-to-End Revenue Cycle Management, Medical Coding & AR Recovery Evaluation',
+                CONFIDENTIALITY_TERM_YEARS: '5',
+                BREACH_NOTICE_DAYS: '5',
+                STATE_JURISDICTION: 'Texas',
+                CLIENT_SIGNATORY_NAME: 'Dr. Jonathan Vance, MD',
+                CLIENT_SIGNATORY_TITLE: 'Managing Partner & Chief Medical Officer',
+                SIGNATORY_NAME: 'Dr. Jonathan Vance, MD',
+                SIGNATORY_TITLE: 'Managing Partner & Chief Medical Officer',
+                PROVIDER_COUNT: '14',
+                EHR_SYSTEM: 'eClinicalWorks (eCW) v12',
+                EHR_PLATFORM_NAME: 'eClinicalWorks (eCW) v12',
+                CLEARINGHOUSE_NAME: 'Waystar EDI Clearinghouse',
+                COLLECTION_FEE_PERCENT: '4.5',
+                MONTHLY_MINIMUM_FEE: '3,500',
+                INVOICE_DUE_DAYS: '15',
+                INITIAL_TERM_MONTHS: '24',
+                CONTRACTOR_NAME: 'Sarah Jenkins, CPC, CPMA',
+                CONTRACTOR_ROLE: 'Senior Certified Medical Coder & DRG Auditor',
+                CONTRACTOR_ADDRESS: '820 Oakridge Lane, Austin, TX 78701',
+                COMPENSATION_RATE: '$32.00 USD per hour',
+                BILLING_FREQUENCY: 'Bi-Weekly',
+                ACCURACY_SLA_PERCENT: '98.0',
+                NON_SOLICIT_MONTHS: '24',
+                EMPLOYEE_NAME: 'Ahamad Fazil',
+                EMPLOYEE_CODE: 'ZRC-USR-003',
+                DESIGNATION_ROLE: 'Senior AR & Billing Specialist',
+                DEPARTMENT: 'RCM Operations',
+                REPORTING_MANAGER: 'Mujibu Rahuman P M (CEO)',
+                MONTHLY_COMPENSATION: 'As per Executive Offer Letter',
+                PROBATION_MONTHS: '3',
+                NOTICE_PERIOD_DAYS: '30',
+                TAX_ID_EIN: '84-3920194',
+                GROUP_NPI: '1942857391',
+                PROVIDER_FULL_NAME: 'Dr. Jonathan Vance, MD, FACC',
+                INDIVIDUAL_NPI: '1023498123',
+                CAQH_ID: '14892031',
+                CLEAN_CLAIM_TARGET: '97.5',
+                CHARGE_ENTRY_SLA_HOURS: '24',
+                PAYMENT_POSTING_SLA_HOURS: '24',
+                DENIAL_APPEAL_SLA_DAYS: '3',
+                AR_DAYS_TARGET: '32',
+                ACCOUNT_MANAGER_NAME: 'Mujibu Rahuman P M',
+                ASSIGNED_TEAM_COUNT: '6',
+                REVOCATION_SLA_HOURS: '4',
+                CLIENT_IT_CONTACT: 'Marcus Reed (Director of Healthcare IT)'
+            };
+
+            document.querySelectorAll('.cnt-ph-input').forEach(inp => {
+                const ph = inp.getAttribute('data-ph');
+                if (sampleMap[ph]) inp.value = sampleMap[ph];
+                else if (!inp.value) inp.value = 'Standard Corporate Term';
+            });
+            updateLiveContractPreview();
+        }
+
+        function getRenderedContractText() {
+            const cnt = (dbState.contracts || []).find(c => c.id === activePreviewContractId);
+            if (!cnt) return '';
+            let output = cnt.body || '';
+            document.querySelectorAll('.cnt-ph-input').forEach(inp => {
+                const ph = inp.getAttribute('data-ph');
+                const val = inp.value.trim();
+                const replacement = val ? val : `[{{${ph}}}]`;
+                const rgx = new RegExp(`\{\{\s*${ph}\s*\}\}`, 'g');
+                output = output.replace(rgx, replacement);
+            });
+            return output;
+        }
+
+        function updateLiveContractPreview() {
+            const pre = document.getElementById('preview-cnt-rendered-body');
+            if (pre) pre.innerText = getRenderedContractText();
+        }
+
+        function copyGeneratedContract() {
+            const txt = getRenderedContractText();
+            if (!txt) return;
+            navigator.clipboard.writeText(txt).then(() => {
+                alert('Contract text copied to clipboard!');
+            }).catch(() => {
+                alert('Copied contract text.');
+            });
+        }
+
+        function downloadGeneratedContractDoc() {
+            const cnt = (dbState.contracts || []).find(c => c.id === activePreviewContractId);
+            if (!cnt) return;
+            const txt = getRenderedContractText();
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeName = (cnt.title || 'Zencora_Contract').replace(/[^a-zA-Z0-9_-]/g, '_');
+            a.href = url;
+            a.download = `${safeName}_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function printGeneratedContract() {
+            const cnt = (dbState.contracts || []).find(c => c.id === activePreviewContractId);
+            if (!cnt) return;
+            const txt = getRenderedContractText();
+            const win = window.open('', '_blank', 'width=900,height=750');
+            if (!win) return;
+            win.document.write(`
+                <html>
+                <head>
+                    <title>${cnt.title} — Zencora Health Solutions</title>
+                    <style>
+                        body { font-family: 'Georgia', 'Times New Roman', serif; padding: 40px 55px; color: #0F172A; line-height: 1.6; }
+                        pre { font-family: 'Courier New', monospace; font-size: 12.5px; white-space: pre-wrap; word-wrap: break-word; }
+                    </style>
+                </head>
+                <body>
+                    <pre>${txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                    <script>window.onload = function(){ window.print(); };<\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        }
+
+        async function saveExecutedContractToVault() {
+            const cnt = (dbState.contracts || []).find(c => c.id === activePreviewContractId);
+            if (!cnt) return;
+            const txt = getRenderedContractText();
+            const b64 = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(txt)));
+            const safeName = `${(cnt.code || 'CONTRACT').replace(/[^a-zA-Z0-9_-]/g, '_')}_Executed_${new Date().toISOString().slice(0,10)}.txt`;
+            const isStaffContract = (cnt.category || '').includes('HR');
+            const vaultType = isStaffContract ? 'staff' : 'client';
+            const firstClient = (dbState.clients && dbState.clients[0]) || { id: 'CLI-101', name: 'Corporate Client' };
+            const firstStaff = (dbState.employees && dbState.employees[0]) || { id: 'EMP-001', name: 'Zencora Team' };
+
+            const payload = {
+                vaultType,
+                entityId: isStaffContract ? firstStaff.id : firstClient.id,
+                entityName: isStaffContract ? firstStaff.name : firstClient.name,
+                title: `${cnt.title} (Generated)`,
+                category: 'Legal & Contracts',
+                fileName: safeName,
+                fileDataBase64: b64,
+                mimeType: 'text/plain',
+                uploadedBy: currentUser ? (currentUser.displayName || currentUser.username) : 'Mujibu Rahuman P M (CEO)',
+                notes: txt.slice(0, 600)
+            };
+
+            try {
+                const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    const saved = await res.json();
+                    if (vaultType === 'staff') dbState.staffDocuments.unshift(saved);
+                    else dbState.clientDocuments.unshift(saved);
+                }
+            } catch (e) {}
+
+            closeModal('modal-contract-preview');
+            alert(`Generated contract "${cnt.title}" has been archived to the Document Storage Vault!`);
         }
     </script>
 </body>

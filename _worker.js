@@ -172,17 +172,28 @@ async function sendOtpEmailViaResend(env, user, otp) {
 const CACHE_DB_URL = "https://rcm-internal.zencorahs.com/__db_state_v1";
 
 function ensureContractsSeeded(dbObj) {
-    if (!dbObj || typeof dbObj !== 'object') return dbObj;
+    if (!dbObj || typeof dbObj !== 'object') return { dbObj, modified: false };
     let modified = false;
     if (!Array.isArray(dbObj.contracts) || dbObj.contracts.length === 0) {
         dbObj.contracts = JSON.parse(JSON.stringify(INITIAL_DB.contracts || []));
         modified = true;
     }
+    const isHigherProf = (roleStr, desigStr) => {
+        const r = String((roleStr || '') + ' ' + (desigStr || '')).toLowerCase();
+        return r.includes('super_admin') || r.includes('admin') || r.includes('ceo') || r.includes('founder') || r.includes('manager') || r.includes('director') || r.includes('vp');
+    };
     for (const u of (dbObj.users || [])) {
-        const r = String(u.role || '').toLowerCase();
-        if (r === 'super_admin' || r === 'admin' || r.includes('ceo') || r.includes('manager') || r.includes('director')) {
+        if (isHigherProf(u.role, u.designation)) {
             if (Array.isArray(u.allowedModules) && !u.allowedModules.includes('contracts')) {
                 u.allowedModules.push('contracts');
+                modified = true;
+            }
+        }
+    }
+    for (const emp of (dbObj.employees || [])) {
+        if (isHigherProf(emp.role, emp.designation)) {
+            if (Array.isArray(emp.allowedModules) && !emp.allowedModules.includes('contracts')) {
+                emp.allowedModules.push('contracts');
                 modified = true;
             }
         }
