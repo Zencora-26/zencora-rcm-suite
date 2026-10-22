@@ -1694,21 +1694,24 @@
     </div>
 
     <!-- FORGOT PASSWORD MODAL -->
-    <div id="forgot-password-modal" class="modal-overlay" onclick="closeForgotPasswordModal(event)">
-        <div class="modal-card" onclick="event.stopPropagation()">
+    <div id="forgot-password-modal" class="modal-overlay" style="z-index: 10050;" onclick="closeForgotPasswordModal(event)">
+        <div class="modal-card" style="max-width: 460px;" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div class="modal-title">Reset Your Credentials</div>
-                <button class="modal-close-btn" onclick="closeForgotPasswordModal(event)">&times;</button>
+                <button type="button" class="modal-close-btn" onclick="closeForgotPasswordModal(event)">&times;</button>
             </div>
-            <p style="font-size:0.82rem; color:var(--text-muted);">Enter your User ID, Email, or Registered Mobile to receive a secure OTP code.</p>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin: 0;">Enter your User ID, Registered Email, or Mobile Number to receive a 6-digit verification OTP via email.</p>
             <div class="form-group">
-                <label class="form-label">Account Identifier</label>
-                <input type="text" id="fp-identifier" class="form-input" placeholder="e.g. rahuman@zencorahs.com or admin">
+                <label class="form-label">Account Identifier (Username / Email / Mobile)</label>
+                <input type="text" id="fp-identifier" class="form-input" placeholder="e.g. rahuman@zencorahs.com or ceo_zencora">
             </div>
             <div id="fp-otp-group" style="display:none; flex-direction: column; gap: 0.75rem;">
                 <div class="form-group">
-                    <label class="form-label">Verification OTP Code</label>
-                    <input type="text" id="fp-otp" class="form-input" placeholder="Enter 6-digit OTP (Demo: 842619)">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.35rem;">
+                        <label class="form-label" style="margin-bottom:0;">6-Digit Email OTP Code</label>
+                        <a href="#" onclick="resendFpOtp(event)" style="font-size:0.75rem; color:#991B1B; text-decoration:none; font-weight:600;">Resend OTP</a>
+                    </div>
+                    <input type="text" id="fp-otp" class="form-input" maxlength="6" placeholder="Enter 6-digit OTP from email" style="letter-spacing: 0.25rem; font-weight: 700; text-align: center; font-size: 1.05rem;">
                 </div>
                 <div class="form-group">
                     <label class="form-label">New Password</label>
@@ -1723,6 +1726,10 @@
                     </div>
                 </div>
             </div>
+            <div id="fp-status-msg" style="font-size:0.82rem; padding: 0.65rem 0.85rem; border-radius: 8px; display:none; line-height: 1.4;"></div>
+            <button type="button" id="fp-submit-btn" class="btn-primary" style="width: 100%; justify-content: center;" onclick="handleFpRequest()">Send Verification Code</button>
+        </div>
+    </div>
             <div id="fp-status-msg" style="font-size:0.8rem; display:none;"></div>
             <button id="fp-submit-btn" class="btn-primary" onclick="handleFpRequest()">Send Verification Code</button>
         </div>
@@ -4601,56 +4608,182 @@
         }
 
         function openForgotPasswordModal(e) {
-            e.preventDefault();
-            document.getElementById('forgot-password-modal').style.display = 'flex';
-        }
-
-        function closeForgotPasswordModal() {
-            document.getElementById('forgot-password-modal').style.display = 'none';
-        }
-
-        async function handleFpRequest() {
-            const ident = document.getElementById('fp-identifier').value.trim();
+            if (e && e.preventDefault) e.preventDefault();
+            const loginIdent = document.getElementById('login-identifier');
+            const fpIdent = document.getElementById('fp-identifier');
+            if (loginIdent && fpIdent && loginIdent.value.trim()) {
+                fpIdent.value = loginIdent.value.trim();
+            }
             const otpGroup = document.getElementById('fp-otp-group');
             const submitBtn = document.getElementById('fp-submit-btn');
             const statusMsg = document.getElementById('fp-status-msg');
+            const otpInput = document.getElementById('fp-otp');
+            const newPwInput = document.getElementById('fp-new-pw');
 
-            if (otpGroup.style.display === 'none') {
-                try {
-                    const res = await fetch('/api/auth/forgot-password/send-otp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier: ident })
-                    });
-                    if (res.ok) {
-                        otpGroup.style.display = 'flex';
-                        submitBtn.innerText = 'Verify & Set Password';
-                        statusMsg.style.display = 'block';
-                        statusMsg.style.color = '#34D399';
-                        statusMsg.innerText = 'OTP sent! For demo verification, use code: 842619';
-                    } else {
-                        statusMsg.style.display = 'block';
-                        statusMsg.style.color = '#F87171';
-                        statusMsg.innerText = 'Account not found.';
-                    }
-                } catch(e){
-                    otpGroup.style.display = 'flex';
-                    submitBtn.innerText = 'Verify & Set Password';
-                }
+            if (otpGroup) otpGroup.style.display = 'none';
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Send Verification Code';
+            }
+            if (statusMsg) {
+                statusMsg.style.display = 'none';
+                statusMsg.innerText = '';
+            }
+            if (otpInput) otpInput.value = '';
+            if (newPwInput) newPwInput.value = '';
+
+            const modal = document.getElementById('forgot-password-modal');
+            if (modal) {
+                modal.style.zIndex = '10050';
+                modal.style.display = 'flex';
+            }
+            if (fpIdent) setTimeout(() => fpIdent.focus(), 80);
+        }
+
+        function closeForgotPasswordModal(e) {
+            if (e && e.target && e.currentTarget && e.target !== e.currentTarget && !e.currentTarget.classList.contains('modal-close-btn')) {
+                return;
+            }
+            const modal = document.getElementById('forgot-password-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function setFpStatus(message, type) {
+            const statusMsg = document.getElementById('fp-status-msg');
+            if (!statusMsg) return;
+            statusMsg.style.display = 'block';
+            if (type === 'success') {
+                statusMsg.style.background = '#ECFDF5';
+                statusMsg.style.border = '1px solid #A7F3D0';
+                statusMsg.style.color = '#065F46';
+            } else if (type === 'warning') {
+                statusMsg.style.background = '#FFFBEB';
+                statusMsg.style.border = '1px solid #FDE68A';
+                statusMsg.style.color = '#92400E';
             } else {
-                const otp = document.getElementById('fp-otp').value.trim();
-                const newPassword = document.getElementById('fp-new-pw').value.trim();
+                statusMsg.style.background = '#FEF2F2';
+                statusMsg.style.border = '1px solid #FECACA';
+                statusMsg.style.color = '#991B1B';
+            }
+            statusMsg.innerText = message;
+        }
+
+        async function resendFpOtp(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            await sendFpOtpCode();
+        }
+
+        async function sendFpOtpCode() {
+            const ident = (document.getElementById('fp-identifier')?.value || '').trim();
+            const otpGroup = document.getElementById('fp-otp-group');
+            const submitBtn = document.getElementById('fp-submit-btn');
+
+            if (!ident) {
+                setFpStatus('Please enter your Username, Registered Email, or Mobile Number.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Sending OTP to Email...';
+            }
+            setFpStatus('Dispatching 6-digit verification code via Resend Email API...', 'warning');
+
+            try {
+                const res = await fetch('/api/auth/forgot-password/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: ident })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.success) {
+                    if (otpGroup) otpGroup.style.display = 'flex';
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Verify OTP & Update Password';
+                    }
+                    if (data.emailSent) {
+                        setFpStatus(`Verification OTP sent to ${data.maskedEmail || 'your registered email'}. Please check your inbox (and spam folder).`, 'success');
+                    } else if (data.demoOtp) {
+                        setFpStatus(`${data.message || 'Email delivery note:'} ${data.warning ? '(' + data.warning + ') ' : ''}Fallback verification code: ${data.demoOtp}`, 'warning');
+                    } else {
+                        setFpStatus(data.message || 'Verification code generated. Please check your email.', 'success');
+                    }
+                    const otpField = document.getElementById('fp-otp');
+                    if (otpField) setTimeout(() => otpField.focus(), 80);
+                } else {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Send Verification Code';
+                    }
+                    setFpStatus(data.error || 'No registered account found for that identifier.', 'error');
+                }
+            } catch (err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Send Verification Code';
+                }
+                setFpStatus('Network error while contacting server. Please try again.', 'error');
+            }
+        }
+
+        async function handleFpRequest() {
+            const ident = (document.getElementById('fp-identifier')?.value || '').trim();
+            const otpGroup = document.getElementById('fp-otp-group');
+            const submitBtn = document.getElementById('fp-submit-btn');
+
+            if (!otpGroup || otpGroup.style.display === 'none') {
+                await sendFpOtpCode();
+                return;
+            }
+
+            const otp = (document.getElementById('fp-otp')?.value || '').trim();
+            const newPassword = (document.getElementById('fp-new-pw')?.value || '').trim();
+
+            if (!otp) {
+                setFpStatus('Please enter the 6-digit OTP code sent to your email.', 'error');
+                return;
+            }
+            if (!newPassword || newPassword.length < 4) {
+                setFpStatus('Please enter a new password (at least 4 characters).', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Verifying & Updating...';
+            }
+
+            try {
                 const res = await fetch('/api/auth/forgot-password/verify-reset', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ identifier: ident, otp, newPassword })
                 });
-                if (res.ok || otp === '842619') {
-                    alert('Password reset successful! You can now log in.');
-                    closeForgotPasswordModal();
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.success) {
+                    setFpStatus('Password reset successfully! Redirecting to login...', 'success');
+                    const loginIdent = document.getElementById('login-identifier');
+                    if (loginIdent && ident) loginIdent.value = ident;
+                    setTimeout(() => {
+                        closeForgotPasswordModal();
+                        alert('Your password has been updated successfully! You can now sign in with your new password.');
+                    }, 500);
                 } else {
-                    alert('Invalid OTP code.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Verify OTP & Update Password';
+                    }
+                    setFpStatus(data.error || 'Invalid or expired OTP code. Please check and try again.', 'error');
                 }
+            } catch (err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Verify OTP & Update Password';
+                }
+                setFpStatus('Network error while verifying OTP. Please try again.', 'error');
             }
         }
 
