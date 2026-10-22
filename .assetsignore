@@ -1,0 +1,12 @@
+_worker.js
+.git/
+.gitignore
+.assetsignore
+wrangler.json
+server.py
+database.json
+run.bat
+__pycache__/
+*.py
+*.pyc
+*.bat

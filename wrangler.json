@@ -1,0 +1,15 @@
+{
+  "name": "zencora-rcm-suite",
+  "main": "_worker.js",
+  "compatibility_date": "2024-09-23",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "DB",
+      "id": "12be325cb7ba4c13a4388f762f8a3f65"
+    }
+  ]
+}
