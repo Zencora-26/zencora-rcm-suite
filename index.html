@@ -4573,28 +4573,8 @@
                     errorEl.style.display = 'block';
                 }
             } catch(e) {
-                if (identifier.toLowerCase() === 'ceo_zencora' && password === 'Admin@123') {
-                    const fallbackUser = {
-                        id: 'usr_000',
-                        userCode: 'ZRC-ADM-001',
-                        username: 'ceo_zencora',
-                        displayName: 'Md Mujibu Rahuman (CEO)',
-                        role: 'super_admin',
-                        allowedModules: ALL_MODULE_KEYS,
-                        email: 'rahuman@zencorahs.com',
-                        phone: '+1 (555) 019-2834',
-                        designation: 'Founder & Chief Executive Officer',
-                        department: 'Executive Leadership',
-                        avatar: 'MR'
-                    };
-                    localStorage.setItem('zencora_rcm_token', 'offline_token_' + Date.now());
-                    localStorage.setItem('zencora_rcm_user', JSON.stringify(fallbackUser));
-                    currentUser = fallbackUser;
-                    mountAppSession();
-                } else {
-                    errorEl.innerText = "Invalid credentials. Please verify your username and password.";
-                    errorEl.style.display = 'block';
-                }
+                errorEl.innerText = "Unable to connect to authentication server. Please check your internet connection and try again.";
+                errorEl.style.display = 'block';
             }
         }
 
@@ -6960,6 +6940,8 @@
             if (codeInput) codeInput.value = currentUser.userCode || 'ZRC-USR-001';
             const dobProfInp = document.getElementById('prof-dob');
             if (dobProfInp) dobProfInp.value = currentUser.dob || currentUser.birthday || '';
+            const pwProfInp = document.getElementById('prof-new-pw');
+            if (pwProfInp) pwProfInp.value = '';
 
             updateProfileAvatarPreview(currentUser.avatar || currentUser.photoUrl);
 
@@ -7031,7 +7013,7 @@
                     await fetch('/api/profile/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: currentUser.username, avatar: dataUrl })
+                        body: JSON.stringify({ id: currentUser.id, employeeId: currentUser.employeeId, username: currentUser.username, email: currentUser.email, avatar: dataUrl })
                     });
                 } catch(err){}
 
@@ -7063,7 +7045,7 @@
                 fetch('/api/profile/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: currentUser.username, avatar: null })
+                    body: JSON.stringify({ id: currentUser.id, employeeId: currentUser.employeeId, username: currentUser.username, email: currentUser.email, avatar: null })
                 });
             } catch(err){}
 
@@ -7085,11 +7067,19 @@
             const displayName = document.getElementById('prof-name').value.trim();
             const email = document.getElementById('prof-email').value.trim();
             const phone = document.getElementById('prof-phone').value.trim();
-            const newPassword = document.getElementById('prof-new-pw').value.trim();
+            const dob = (document.getElementById('prof-dob')?.value || '').trim();
+            const pwEl = document.getElementById('prof-new-pw');
+            const newPassword = pwEl ? pwEl.value.trim() : '';
             const statusMsg = document.getElementById('prof-status-msg');
 
-            const payload = { username: currentUser.username };
+            const payload = {
+                id: currentUser.id || '',
+                employeeId: currentUser.employeeId || '',
+                username: currentUser.username || '',
+                email: currentUser.email || email || ''
+            };
             if (currentUser.avatar) payload.avatar = currentUser.avatar;
+            if (dob) payload.dob = dob;
             if (newPassword) payload.newPassword = newPassword;
 
             if (isFounder) {
@@ -7099,41 +7089,50 @@
             }
 
             try {
+                const token = localStorage.getItem('zencora_rcm_token') || (currentUser && currentUser.token) || '';
                 const res = await fetch('/api/profile/update', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+                    },
                     body: JSON.stringify(payload)
                 });
+                const resData = await res.json().catch(() => ({}));
                 if (res.ok) {
+                    if (dob) currentUser.dob = dob;
                     if (isFounder) {
                         currentUser.displayName = displayName;
                         currentUser.email = email;
                         currentUser.phone = phone;
                     }
+                    if (pwEl) pwEl.value = '';
                     localStorage.setItem('zencora_rcm_user', JSON.stringify(currentUser));
                     updateTopNavbarUserDisplay();
                     statusMsg.style.display = 'block';
                     statusMsg.style.background = '#ECFDF5';
                     statusMsg.style.border = '1px solid #A7F3D0';
                     statusMsg.style.color = '#065F46';
-                    statusMsg.innerText = isFounder
-                        ? 'Super Admin profile details and credentials updated successfully!'
-                        : 'Security password and preferences updated successfully!';
+                    statusMsg.innerText = newPassword
+                        ? 'Security password changed successfully! Your old password is no longer valid.'
+                        : (isFounder
+                            ? 'Super Admin profile details and credentials updated successfully!'
+                            : 'Profile preferences updated successfully!');
+                    setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
+                } else {
+                    statusMsg.style.display = 'block';
+                    statusMsg.style.background = '#FEF2F2';
+                    statusMsg.style.border = '1px solid #FECACA';
+                    statusMsg.style.color = '#991B1B';
+                    statusMsg.innerText = resData.error || 'Failed to update profile on server. Please try again.';
                     setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
                 }
             } catch(err) {
-                if (isFounder) {
-                    currentUser.displayName = displayName;
-                    currentUser.email = email;
-                    currentUser.phone = phone;
-                }
-                localStorage.setItem('zencora_rcm_user', JSON.stringify(currentUser));
-                updateTopNavbarUserDisplay();
                 statusMsg.style.display = 'block';
-                statusMsg.style.background = '#ECFDF5';
-                statusMsg.style.border = '1px solid #A7F3D0';
-                statusMsg.style.color = '#065F46';
-                statusMsg.innerText = 'Profile preferences updated locally.';
+                statusMsg.style.background = '#FEF2F2';
+                statusMsg.style.border = '1px solid #FECACA';
+                statusMsg.style.color = '#991B1B';
+                statusMsg.innerText = 'Network error: Unable to reach server to save password changes.';
                 setTimeout(() => { statusMsg.style.display = 'none'; }, 4000);
             }
         }
@@ -8263,7 +8262,12 @@
             document.getElementById('form-staff-phone').value = '';
             const dobInp = document.getElementById('form-staff-dob'); if (dobInp) dobInp.value = '';
             document.getElementById('form-staff-username').value = '';
-            document.getElementById('form-staff-password').value = 'Zencora@2026';
+            const pwInp = document.getElementById('form-staff-password');
+            if (pwInp) {
+                pwInp.value = 'Zencora@2026';
+                pwInp.required = true;
+                pwInp.placeholder = 'Enter initial login password';
+            }
             applyRolePresetToCheckboxes('Certified Medical Coder (CPC)');
             document.getElementById('modal-staff').style.display = 'flex';
         }
@@ -8283,6 +8287,12 @@
             document.getElementById('form-staff-phone').value = emp.phone || '';
             const dobInp = document.getElementById('form-staff-dob'); if (dobInp) dobInp.value = emp.dob || '';
             document.getElementById('form-staff-username').value = emp.username || emp.id;
+            const pwInp = document.getElementById('form-staff-password');
+            if (pwInp) {
+                pwInp.value = '';
+                pwInp.required = false;
+                pwInp.placeholder = 'Leave blank to keep current password';
+            }
             document.getElementById('form-staff-join').value = emp.joinDate || '2024-06-01';
 
             const allowed = Array.isArray(emp.allowedModules) && emp.allowedModules.length > 0 ? emp.allowedModules : ALL_MODULE_KEYS;
@@ -8312,7 +8322,7 @@
             });
 
             const payload = {
-                userCode, name, role, department, email, phone, dob, username, password, joinDate,
+                userCode, name, role, department, email, phone, dob, username, joinDate,
                 allowedModules,
                 status: 'Active',
                 kpiScore: 0.0,
@@ -8329,6 +8339,11 @@
                     managerNotes: 'New team member — appraisal scorecard pending initial evaluation.'
                 }
             };
+            if (password) {
+                payload.password = password;
+            } else if (!existingId) {
+                payload.password = 'Zencora@2026';
+            }
 
             if (existingId) {
                 const idx = dbState.employees.findIndex(em => em.id === existingId);
@@ -8337,7 +8352,9 @@
                     payload.kpiScore = dbState.employees[idx].kpiScore !== undefined ? dbState.employees[idx].kpiScore : 0.0;
                     payload.assessment = dbState.employees[idx].assessment || payload.assessment;
                     payload.assignedClients = dbState.employees[idx].assignedClients || [];
-                    dbState.employees[idx] = { ...dbState.employees[idx], ...payload };
+                    const localCopy = { ...dbState.employees[idx], ...payload };
+                    delete localCopy.password;
+                    dbState.employees[idx] = localCopy;
                 }
                 try {
                     await fetch(`/api/employees/${existingId}`, {
@@ -8360,12 +8377,14 @@
                         const saved = await res.json();
                         dbState.employees.push(saved);
                     } else {
-                        payload.id = 'EMP-' + String(dbState.employees.length + 1).padStart(3, '0');
-                        dbState.employees.push(payload);
+                        const localCopy = { ...payload, id: 'EMP-' + String(dbState.employees.length + 1).padStart(3, '0') };
+                        delete localCopy.password;
+                        dbState.employees.push(localCopy);
                     }
                 } catch(err) {
-                    payload.id = 'EMP-' + String(dbState.employees.length + 1).padStart(3, '0');
-                    dbState.employees.push(payload);
+                    const localCopy = { ...payload, id: 'EMP-' + String(dbState.employees.length + 1).padStart(3, '0') };
+                    delete localCopy.password;
+                    dbState.employees.push(localCopy);
                 }
                 syncLocalDb();
                 closeModal('modal-staff');
